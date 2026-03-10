@@ -28,18 +28,29 @@ ROLL_RESIST = 15
 
 LAPS_TO_WIN = 3
 
-def safe_sys_font(name: str, size: int, bold: bool = False):
-    """Use default pygame font by default; optionally try system fonts when enabled."""
-    prefer_system = os.getenv("NCR_USE_SYSFONT", "0") == "1"
-    if prefer_system:
-        try:
-            return pygame.font.SysFont(name, size, bold=bold)
-        except Exception:
-            pass
+def force_safe_font_mode():
+    """Monkey-patch SysFont to always fallback to default pygame font on unstable Windows envs."""
+    allow_sys = os.getenv("NCR_ALLOW_SYSFONT", "0") == "1"
+    if allow_sys:
+        return
 
-    font = pygame.font.Font(None, size)
-    font.set_bold(bold)
-    return font
+    def _safe_sysfont(_name, size, bold=False, italic=False):
+        font = pygame.font.Font(None, size)
+        font.set_bold(bold)
+        font.set_italic(italic)
+        return font
+
+    pygame.font.SysFont = _safe_sysfont
+
+
+def safe_sys_font(name: str, size: int, bold: bool = False):
+    """Safe font loader. Uses patched SysFont (default font) unless NCR_ALLOW_SYSFONT=1."""
+    try:
+        return pygame.font.SysFont(name, size, bold=bold)
+    except Exception:
+        font = pygame.font.Font(None, size)
+        font.set_bold(bold)
+        return font
 
 
 @dataclass
@@ -113,6 +124,7 @@ class Car:
 class RaceGame:
     def __init__(self):
         pygame.init()
+        force_safe_font_mode()
         pygame.display.set_caption(TITLE)
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         self.clock = pygame.time.Clock()

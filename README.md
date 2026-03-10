@@ -113,3 +113,28 @@ cd /d D:\你的项目路径\Project_price
 git pull
 python racer_game.py
 ```
+
+
+### 仍然启动失败时（强制安全字体模式）
+
+最新版本默认已经启用“安全字体模式”，会把 `pygame.font.SysFont` 自动回退到内置字体。
+
+你可以用下面命令确认：
+
+```bat
+findstr /n "force_safe_font_mode" racer_game.py
+```
+
+若查不到，请先更新代码：
+
+```bat
+git fetch --all
+git reset --hard origin/master
+```
+
+如果你确实想尝试系统字体（不建议），可以手动开启：
+
+```bat
+set NCR_ALLOW_SYSFONT=1
+python racer_game.py
+```

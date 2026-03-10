@@ -8,7 +8,7 @@ if not exist racer_game.py (
   exit /b 1
 )
 
-findstr /C:"def safe_sys_font" racer_game.py >nul
+findstr /C:"def force_safe_font_mode" racer_game.py >nul
 if errorlevel 1 (
   echo [ERROR] Your racer_game.py is an old version. Please run: git pull
   pause
