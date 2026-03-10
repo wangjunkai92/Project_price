@@ -55,7 +55,18 @@ python -m PyInstaller --noconfirm --onefile --windowed --name NeoCircuitRacer ra
 - `racer_game.py`：游戏主程序
 - `requirements.txt`：依赖
 - `build_exe.bat`：Windows 一键打包脚本
+- `run_game.bat`：Windows 一键启动脚本（会检查是否是最新游戏代码）
 
+
+
+
+## 一键启动（Windows）
+
+在项目目录双击 `run_game.bat` 即可启动。
+
+它会自动做两件事：
+- 切换到脚本所在目录运行（避免路径错误）
+- 检查 `racer_game.py` 是否包含新版启动修复（避免你拉到旧代码还在报错）
 
 ## 常见问题（Windows）
 
@@ -91,8 +102,9 @@ dir racer_game.py
 这通常是某些 Windows + Python + pygame 组合下，系统字体注册表返回异常导致 `pygame.font.SysFont` 初始化失败。
 
 本项目已做兼容修复：
-- 优先尝试系统字体（如 `segoeui`）
-- 失败时自动回退到 `pygame` 默认字体，不会再因为字体问题直接崩溃
+- 默认直接使用 `pygame` 内置字体（最稳）
+- 仅在设置环境变量 `NCR_USE_SYSFONT=1` 时才尝试系统字体
+- 因此默认情况下不会触发系统字体注册问题
 
 如果你本地还是旧代码，请先拉取最新版本后再运行：
 

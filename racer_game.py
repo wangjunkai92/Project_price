@@ -1,4 +1,5 @@
 import math
+import os
 import sys
 from dataclasses import dataclass
 
@@ -28,13 +29,17 @@ ROLL_RESIST = 15
 LAPS_TO_WIN = 3
 
 def safe_sys_font(name: str, size: int, bold: bool = False):
-    """Load system font safely; fallback to pygame default font on broken Windows font registry."""
-    try:
-        return pygame.font.SysFont(name, size, bold=bold)
-    except Exception:
-        font = pygame.font.Font(None, size)
-        font.set_bold(bold)
-        return font
+    """Use default pygame font by default; optionally try system fonts when enabled."""
+    prefer_system = os.getenv("NCR_USE_SYSFONT", "0") == "1"
+    if prefer_system:
+        try:
+            return pygame.font.SysFont(name, size, bold=bold)
+        except Exception:
+            pass
+
+    font = pygame.font.Font(None, size)
+    font.set_bold(bold)
+    return font
 
 
 @dataclass
